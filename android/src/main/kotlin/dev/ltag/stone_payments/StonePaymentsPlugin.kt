@@ -51,6 +51,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                     result.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
+
             "payment" -> {
                 try {
                     paymentUsecase.doPayment(
@@ -63,6 +64,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                     result.error("UNAVAILABLE", "Cannot Pay", e.toString())
                 }
             }
+
             "abortPayment" -> {
                 try {
                     paymentUsecase.abortPayment(result)
@@ -70,6 +72,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                     result.error("UNAVAILABLE", "Cannot Abort", e.toString())
                 }
             }
+
             "printFile" -> {
                 try {
                     printerUsecase.printFile(
@@ -79,6 +82,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                     result.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
+
             "print" -> {
                 try {
                     printerUsecase.print(
@@ -88,6 +92,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                     result.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
+
             "printReceipt" -> {
                 try {
                     printerUsecase.printReceipt(
@@ -97,15 +102,18 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                     result.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
-         "cancel-payment" -> {
-             try {
-                 paymentUsecase.cancel(
-                     call.argument("acquirerTransactionKey")!!, call.argument("printReceipt"), result
-                 )
-             } catch (e: Exception) {
-                 result.error("UNAVAILABLE", "Cannot cancel", e.toString())
-             }
-         }
+
+            "cancel-payment" -> {
+                try {
+                    paymentUsecase.cancel(
+                        call.argument("acquirerTransactionKey")!!,
+                        call.argument("printReceipt"),
+                        result
+                    )
+                } catch (e: Exception) {
+                    result.error("UNAVAILABLE", "Cannot cancel", e.toString())
+                }
+            }
 
             "capture" -> {
                 try {
@@ -115,6 +123,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                 }
 
             }
+
             else -> {
                 result.notImplemented()
             }
