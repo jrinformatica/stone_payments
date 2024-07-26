@@ -23,6 +23,7 @@ class ActivateUsecase(
 
         if (stoneKeys.isNotEmpty() && stoneKeys.size != 2) {
             result.error("ERROR", "Invalid Stone Keys", "Invalid Stone Keys")
+            return
         }
 
         val stoneKeysHashed: HashMap<StoneKeyType, String> = HashMap<StoneKeyType, String>()
