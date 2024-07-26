@@ -1,66 +1,27 @@
-// ignore_for_file: constant_identifier_names
+import 'package:json_annotation/json_annotation.dart';
 
-/// StatusTransaction
-///
-/// This class is used to define the status of a transaction.
-///
-/// The status of a transaction is used in the following classes:
-///
-/// * [Transaction]
-///
-/// The following is the list of possible status:
-///
-/// * [UNKNOWN]
-/// * [APPROVED]
-/// * [DECLINED]
-/// * [DECLINED_BY_CARD]
-/// * [CANCELLED]
-/// * [PARTIAL_APPROVED]
-/// * [TECHNICAL_ERROR]
-/// * [REJECTED]
-/// * [WITH_ERROR]
-/// * [PENDING]
-/// * [REVERSED]
-/// * [PENDING_REVERSAL]
-/// * [TRANSACTION_WAITING_CARD]
-/// * [TRANSACTION_WAITING_PASSWORD]
-/// * [TRANSACTION_SENDING]
-/// * [TRANSACTION_REMOVE_CARD]
-/// * [TRANSACTION_CARD_REMOVED]
-/// * [REVERSING_TRANSACTION_WITH_ERROR]
-///
-/// The status is used to determine the type of transaction.
-///
-/// For example, a transaction with the status [APPROVED] is a transaction
-/// that was approved by the bank.
-///
-/// In the case of a transaction with the status [DECLINED], it is a transaction
-/// that was not approved by the bank.
-///
-/// In the case of a transaction with the status [CANCELLED], it is a transaction
-/// that was canceled by the user.
-///
-/// In the case of a transaction with the status [TECHNICAL_ERROR], it is a
-/// transaction that was not completed due to a technical error.
-///
-/// In the case of a transaction with the status [WITH_ERROR], it is a transaction
-/// that was not completed due to an error.
-///
-/// In the case of a transaction with the status [REJECTED], it is a transaction
-/// that was rejected by the bank.
-///
-/// In the case of a transaction with the status [PARTIAL_APPROVED], it is a
-/// transaction that was approved by the bank and has a partial value.
-///
-/// In the case of a transaction with the status [REVERSED], it is a transaction
-/// that was automatically reversed by the bank.
-///
-/// In the case of a transaction with the status [PENDING], it is a transaction
-/// that is in progress.
-///
-/// In the case of a transaction with the status [PENDING_REVERSAL],
-class StatusTransaction {
-  final String name;
-
-  const StatusTransaction(this.name);
+@JsonEnum(fieldRename: FieldRename.screamingSnake)
+enum StatusTransaction {
+  transactionWaitingCard, //	Aguardando o cartão ser inserido
+  transactionWaitingPassword, //	Aguardando a senha do cartão
+  transactionSending, //	Enviando a transação para a Stone
+  transactionRemoveCard, //	Aguardando o cartão ser retirado (Somente para Chip e Senha)
+  transactionCardRemoved, //	Indica que o cartão foi removido
+  reversingTransactionWithError, //	Tentando reverter transação com status WITH_ERROR
+  transactionTypeSelection, //	Usado quando necessário escolher entre modalidades. Por exemplo: Alimentação e Refeição no mesmo cartão
+  transactionWaitingQrcodeScan, //	Usado para mostrar o QrCode e aguardar sua leitura
 }
+
+const Map<String, StatusTransaction> statusTransactionEnumMap =
+    <String, StatusTransaction>{
+  'TRANSACTION_WAITING_CARD': StatusTransaction.transactionWaitingCard,
+  'TRANSACTION_WAITING_PASSWORD': StatusTransaction.transactionWaitingPassword,
+  'TRANSACTION_SENDING': StatusTransaction.transactionSending,
+  'TRANSACTION_REMOVE_CARD': StatusTransaction.transactionRemoveCard,
+  'TRANSACTION_CARD_REMOVED': StatusTransaction.transactionCardRemoved,
+  'REVERSING_TRANSACTION_WITH_ERROR':
+      StatusTransaction.reversingTransactionWithError,
+  'TRANSACTION_TYPE_SELECTION': StatusTransaction.transactionTypeSelection,
+  'TRANSACTION_WAITING_QRCODE_SCAN':
+      StatusTransaction.transactionWaitingQrcodeScan,
+};

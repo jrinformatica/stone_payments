@@ -125,7 +125,8 @@ class StonePayments {
     bool? cancelOnError,
     VoidCallback? onDone,
     Function? onError,
-  }) get onMessageListener => StonePaymentsPlatform.instance.onMessage.listen;
+  }) get onMessageListener =>
+      StonePaymentsPlatform.instance.onPaymentStatus.listen;
 
   /// Retorna um [StreamSubscription] que escuta as mensagens da plataforma da Stone.
   ///

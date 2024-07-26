@@ -108,9 +108,9 @@ class PaymentUsecase(
                     stonePayments.providerPosTransaction = null
                 }
 
-                override fun onStatusChanged(p0: Action?) {
-
-                    if (p0 == Action.TRANSACTION_WAITING_QRCODE_SCAN) {
+                override fun onStatusChanged(status: Action?) {
+                    sendAPaymentStatus(status.toString())
+                    if (status == Action.TRANSACTION_WAITING_QRCODE_SCAN) {
                         sendAQRCode(transactionObject.qrCode)
                     }
                 }
@@ -265,13 +265,13 @@ class PaymentUsecase(
         }
 
     }
-    private fun sendAMessage(message: String) {
+    private fun sendAPaymentStatus(status: String) {
         Handler(Looper.getMainLooper()).post {
             val channel = MethodChannel(
                 StonePaymentsPlugin.flutterBinaryMessenger!!,
                 "stone_payments",
             )
-            channel.invokeMethod("message", message)
+            channel.invokeMethod("payment-status", status)
         }
     }
     

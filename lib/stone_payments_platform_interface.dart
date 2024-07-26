@@ -28,7 +28,7 @@ abstract class StonePaymentsPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Stream<StatusTransaction> get onMessage;
+  Stream<StatusTransaction> get onPaymentStatus;
 
   Stream<String> get onQRCode;
 

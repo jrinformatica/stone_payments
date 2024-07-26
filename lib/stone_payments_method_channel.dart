@@ -19,7 +19,7 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   final _paymentController = StreamController<StatusTransaction>.broadcast();
   final _qrcodeController = StreamController<String>.broadcast();
   @override
-  Stream<StatusTransaction> get onMessage => _paymentController.stream;
+  Stream<StatusTransaction> get onPaymentStatus => _paymentController.stream;
 
   @override
   Stream<String> get onQRCode => _qrcodeController.stream;
@@ -27,8 +27,9 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   MethodChannelStonePayments() {
     methodChannel.setMethodCallHandler((call) async {
       switch (call.method) {
-        case 'message':
-          _paymentController.add(StatusTransaction(call.arguments));
+        case 'payment-status':
+          String status = call.arguments;
+          _paymentController.add(statusTransactionEnumMap[status]!);
           break;
         case 'qrcode':
           _qrcodeController.add(call.arguments.replaceAll("\n", ""));

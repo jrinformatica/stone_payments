@@ -24,8 +24,7 @@ class MockStonePaymentsPlatform
   }
 
   @override
-  Stream<StatusTransaction> get onMessage =>
-      Stream.value(const StatusTransaction("UNKNOWN"));
+  Stream<StatusTransaction> get onPaymentStatus => const Stream.empty();
 
   @override
   Stream<String> get onQRCode => Stream.value("");
