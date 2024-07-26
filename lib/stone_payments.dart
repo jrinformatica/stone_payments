@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
+import 'package:stone_payments/models/transaction.dart';
 
 import 'enums/type_transaction_enum.dart';
 import 'models/item_print_model.dart';
@@ -22,7 +23,7 @@ class StonePayments {
   /// Retorna:
   ///
   /// * Uma `Future<String?>` com o status do pagamento. O valor pode ser nulo em caso de erro.
-  Future<String?> payment({
+  Future<Transaction> payment({
     required double value,
     required TypeTransactionEnum typeTransaction,
     int installment = 1,
@@ -42,18 +43,18 @@ class StonePayments {
     );
   }
 
-  Future<String?> abortPayment() {
+  Future<void> abortPayment() {
     return StonePaymentsPlatform.instance.abortPayment();
   }
 
-  Future<String?> cancel({
-    required String transactionId,
+  Future<void> cancel({
+    required String acquirerTransactionKey,
     bool? printReceipt,
   }) {
-    assert(transactionId != "", 'A transação não pode ser vazia');
+    assert(acquirerTransactionKey != "", 'A transação não pode ser vazia');
 
     return StonePaymentsPlatform.instance.cancel(
-      transactionId: transactionId,
+      acquirerTransactionKey: acquirerTransactionKey,
       printReceipt: printReceipt,
     );
   }
@@ -68,7 +69,7 @@ class StonePayments {
   /// Retorna:
   ///
   /// * Uma `Future<String?>` com o status da ativação. O valor pode ser nulo em caso de erro.
-  Future<String?> activateStone({
+  Future<void> activateStone({
     required String appName,
     required String stoneCode,
     List<String> stoneKeys = const [],
@@ -90,7 +91,7 @@ class StonePayments {
   ///
   /// * Uma `Future<String?>` com o status da impressão. O valor pode ser nulo em caso de erro.
   @Deprecated('Use print() instead.')
-  Future<String?> printFile(String imgBase64) {
+  Future<void> printFile(String imgBase64) {
     return StonePaymentsPlatform.instance.printFile(imgBase64);
   }
 
@@ -103,7 +104,7 @@ class StonePayments {
   /// Retorna:
   ///
   /// * Uma `Future<String?>` com o status da impressão. O valor pode ser nulo em caso de erro.
-  Future<String?> print(List<ItemPrintModel> items) {
+  Future<void> print(List<ItemPrintModel> items) {
     return StonePaymentsPlatform.instance.print(items);
   }
 
@@ -143,26 +144,6 @@ class StonePayments {
     bool? cancelOnError,
     VoidCallback? onDone,
     Function? onError,
-  }) get onTransactionListener =>
-      StonePaymentsPlatform.instance.onTransaction.listen;
-
-  /// Retorna um [StreamSubscription] que escuta as mensagens da plataforma da Stone.
-  ///
-  /// Parâmetros:
-  ///
-  /// * `onMessage` - Função de retorno para tratar as mensagens da plataforma da Stone.
-  /// * `cancelOnError` (optional) - Se definido como true, o [StreamSubscription] será cancelado em caso de erro.
-  /// * `onDone` (optional) - Função de retorno para lidar com a conclusão da transmissão.
-  /// * `onError` (optional) - Função de retorno para lidar com erros no stream.
-  ///
-  /// Retorna:
-  ///
-  /// * Uma função que retorna um [StreamSubscription<String>] para escutar as mensagens da plataforma da Stone.
-  StreamSubscription Function(
-    ValueChanged<String>?, {
-    bool? cancelOnError,
-    VoidCallback? onDone,
-    Function? onError,
   }) get onQRCodeListener => StonePaymentsPlatform.instance.onQRCode.listen;
 
   /// Imprime o comprovante de pagamento.
@@ -174,7 +155,7 @@ class StonePayments {
   /// Retorna:
   ///
   /// * Uma `Future<String?>` com o status da impressão. O valor pode ser nulo em caso de erro.
-  Future<String?> printReceipt(TypeOwnerPrintEnum type) {
+  Future<void> printReceipt(TypeOwnerPrintEnum type) {
     return StonePaymentsPlatform.instance.printReceipt(type);
   }
 }

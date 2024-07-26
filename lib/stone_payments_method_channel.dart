@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
+import 'package:stone_payments/models/transaction.dart';
 
 import 'enums/type_transaction_enum.dart';
 import 'models/item_print_model.dart';
@@ -17,13 +18,8 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
 
   final _paymentController = StreamController<StatusTransaction>.broadcast();
   final _qrcodeController = StreamController<String>.broadcast();
-  final _transactionController = StreamController<String>.broadcast();
-
   @override
   Stream<StatusTransaction> get onMessage => _paymentController.stream;
-
-  @override
-  Stream<String> get onTransaction => _transactionController.stream;
 
   @override
   Stream<String> get onQRCode => _qrcodeController.stream;
@@ -34,42 +30,37 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
         case 'message':
           _paymentController.add(StatusTransaction(call.arguments));
           break;
-        case 'transaction':
-          _transactionController.add(call.arguments);
-          break;
         case 'qrcode':
           _qrcodeController.add(call.arguments.replaceAll("\n", ""));
-          break;
-        default:
-          _paymentController.add(call.arguments);
           break;
       }
     });
   }
 
   @override
-  Future<String?> payment({
+  Future<Transaction> payment({
     required double value,
     required TypeTransactionEnum typeTransaction,
     int installment = 1,
     bool? printReceipt,
   }) async {
-    final result = await methodChannel.invokeMethod<String>(
+    final Map<String, dynamic>? json =
+        Map<String, dynamic>.from(await methodChannel.invokeMethod(
       'payment',
       <String, dynamic>{
         'value': value,
         'typeTransaction': typeTransaction.value,
         'installment': installment,
-        'printReceipt': printReceipt,
+        'printReceipt': false, //TODO: MUDAR DEPOIS
       },
-    );
+    ));
 
-    return result;
+    return Transaction.fromJson(json!);
   }
 
   @override
-  Future<String?> abortPayment() async {
-    final result = await methodChannel.invokeMethod<String>(
+  Future<void> abortPayment() async {
+    final result = await methodChannel.invokeMethod(
       'abortPayment',
     );
 
@@ -77,14 +68,14 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   }
 
   @override
-  Future<String?> cancel({
-    required String transactionId,
+  Future<void> cancel({
+    required String acquirerTransactionKey,
     bool? printReceipt,
   }) async {
-    final result = await methodChannel.invokeMethod<String>(
+    final result = await methodChannel.invokeMethod(
       'cancel-payment',
       <String, dynamic>{
-        'transactionId': transactionId,
+        'acquirerTransactionKey': acquirerTransactionKey,
         'printReceipt': printReceipt,
       },
     );
@@ -93,12 +84,12 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   }
 
   @override
-  Future<String?> activateStone({
+  Future<void> activateStone({
     required String appName,
     required String stoneCode,
     List<String> stoneKeys = const [],
   }) async {
-    final result = await methodChannel.invokeMethod<String>(
+    final result = await methodChannel.invokeMethod(
       'activateStone',
       <String, dynamic>{
         'appName': appName,
@@ -111,8 +102,8 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   }
 
   @override
-  Future<String?> printFile(String imgBase64) async {
-    final result = await methodChannel.invokeMethod<String>(
+  Future<void> printFile(String imgBase64) async {
+    final result = await methodChannel.invokeMethod(
       'printFile',
       <String, dynamic>{
         'imgBase64': imgBase64,
@@ -123,8 +114,8 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   }
 
   @override
-  Future<String?> print(List<ItemPrintModel> items) async {
-    final result = await methodChannel.invokeMethod<String>(
+  Future<void> print(List<ItemPrintModel> items) async {
+    final result = await methodChannel.invokeMethod(
       'print',
       <String, dynamic>{
         'items':
@@ -136,8 +127,8 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   }
 
   @override
-  Future<String?> printReceipt(TypeOwnerPrintEnum type) async {
-    final result = await methodChannel.invokeMethod<String>(
+  Future<void> printReceipt(TypeOwnerPrintEnum type) async {
+    final result = await methodChannel.invokeMethod(
       'printReceipt',
       <String, dynamic>{
         'type': type.value,
@@ -145,5 +136,18 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
     );
 
     return result;
+  }
+
+  @override
+  Future<Transaction> capture({required String transactionId}) async {
+    final Map<String, dynamic> json =
+        Map<String, dynamic>.from(await methodChannel.invokeMethod(
+      'capture',
+      <String, dynamic>{
+        'transactionId': transactionId,
+      },
+    ));
+
+    return Transaction.fromJson(json);
   }
 }

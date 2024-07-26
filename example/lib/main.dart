@@ -45,10 +45,6 @@ class _MyAppState extends State<MyApp> {
         text = message.name;
       });
     });
-    stonePaymentsPlugin.onTransactionListener((transaction) {
-      transactionStored = json.decode(transaction)["initiatorTransactionKey"];
-    });
-
     stonePaymentsPlugin.onQRCodeListener((qrcode) {
       setState(() {
         this.qrcode = qrcode;
@@ -139,7 +135,7 @@ class _MyAppState extends State<MyApp> {
                   print(transactionStored);
                   try {
                     await stonePaymentsPlugin.cancel(
-                        transactionId: transactionStored);
+                        acquirerTransactionKey: transactionStored);
                   } catch (e) {
                     listen.pause();
                     setState(() {

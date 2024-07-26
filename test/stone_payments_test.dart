@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:stone_payments/enums/item_print_type_enum.dart';
@@ -8,6 +7,7 @@ import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/enums/type_transaction_enum.dart';
 import 'package:stone_payments/models/item_print_model.dart';
+import 'package:stone_payments/models/transaction.dart';
 import 'package:stone_payments/stone_payments.dart';
 import 'package:stone_payments/stone_payments_method_channel.dart';
 import 'package:stone_payments/stone_payments_platform_interface.dart';
@@ -28,9 +28,6 @@ class MockStonePaymentsPlatform
       Stream.value(const StatusTransaction("UNKNOWN"));
 
   @override
-  Stream<String> get onTransaction => Stream.value("");
-
-  @override
   Stream<String> get onQRCode => Stream.value("");
 
   @override
@@ -39,13 +36,13 @@ class MockStonePaymentsPlatform
   }
 
   @override
-  Future<String?> payment({
+  Future<Transaction> payment({
     required double value,
     required TypeTransactionEnum typeTransaction,
     int installment = 1,
     bool? printReceipt,
   }) {
-    return Future.value('true');
+    return Future.value(Transaction());
   }
 
   @override
@@ -55,7 +52,7 @@ class MockStonePaymentsPlatform
 
   @override
   Future<String?> cancel({
-    required String transactionId,
+    required String acquirerTransactionKey,
     bool? printReceipt,
   }) {
     return Future.value('true');
@@ -69,6 +66,11 @@ class MockStonePaymentsPlatform
   @override
   Future<String?> print(List<ItemPrintModel> items) {
     return Future.value('Printed Items');
+  }
+
+  @override
+  Future<Transaction> capture({required String transactionId}) {
+    return Future.value(Transaction());
   }
 }
 
@@ -95,14 +97,14 @@ void main() {
       int installment = 1;
       bool printReceipt = false;
 
-      String? result = await stonePaymentsPlugin.payment(
+      Transaction? result = await stonePaymentsPlugin.payment(
         value: value,
         typeTransaction: typeTransaction,
         installment: installment,
         printReceipt: printReceipt,
       );
 
-      expect(result, isA<String>());
+      expect(result, isA<Map<String, dynamic>>());
     });
 
     test('payment throws assertion error when value is not greater than 0',
@@ -150,20 +152,16 @@ void main() {
       String appName = 'Test App';
       String stoneCode = '12345';
 
-      String? result = await stonePaymentsPlugin.activateStone(
+      await stonePaymentsPlugin.activateStone(
         appName: appName,
         stoneCode: stoneCode,
       );
-
-      expect(result, isA<String>());
     });
 
     test('printFile should return status of printing', () async {
       String imgBase64 = 'image in base64';
 
-      String? result = await stonePaymentsPlugin.printFile(imgBase64);
-
-      expect(result, isA<String>());
+      expect(stonePaymentsPlugin.printFile(imgBase64), isA<void>());
     });
 
     test('print should return status of printing', () async {
@@ -178,36 +176,13 @@ void main() {
         ),
       ];
 
-      String? result = await stonePaymentsPlugin.print(items);
-
-      expect(result, isA<String>());
+      await stonePaymentsPlugin.print(items);
     });
 
     test('printReceipt should return status of printing', () async {
       TypeOwnerPrintEnum type = TypeOwnerPrintEnum.client;
 
-      String? result = await stonePaymentsPlugin.printReceipt(type);
-
-      expect(result, isA<String>());
-    });
-
-    test('onMessageListener should return StreamSubscription', () {
-      StreamSubscription<StatusTransaction> Function(
-        ValueChanged<StatusTransaction>?, {
-        bool? cancelOnError,
-        VoidCallback? onDone,
-        Function? onError,
-      }) result = stonePaymentsPlugin.onMessageListener;
-
-      expect(
-          result,
-          isA<
-              StreamSubscription<String> Function(
-                ValueChanged<String>?, {
-                bool? cancelOnError,
-                VoidCallback? onDone,
-                Function? onError,
-              })>());
+      await stonePaymentsPlugin.printReceipt(type);
     });
   });
 }

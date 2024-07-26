@@ -3,6 +3,7 @@ import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/enums/type_transaction_enum.dart';
 import 'package:stone_payments/models/item_print_model.dart';
+import 'package:stone_payments/models/transaction.dart';
 
 import 'stone_payments_method_channel.dart';
 
@@ -29,11 +30,9 @@ abstract class StonePaymentsPlatform extends PlatformInterface {
 
   Stream<StatusTransaction> get onMessage;
 
-  Stream<String> get onTransaction;
-
   Stream<String> get onQRCode;
 
-  Future<String?> payment({
+  Future<Transaction> payment({
     required double value,
     required TypeTransactionEnum typeTransaction,
     int installment = 1,
@@ -42,34 +41,28 @@ abstract class StonePaymentsPlatform extends PlatformInterface {
     throw UnimplementedError('payment() has not been implemented.');
   }
 
-  Future<String?> abortPayment() {
+  Future<void> abortPayment() {
     throw UnimplementedError('abortPayment() has not been implemented.');
   }
 
-  Future<String?> cancel({
-    required String transactionId,
+  Future<void> cancel({
+    required String acquirerTransactionKey,
     bool? printReceipt,
-  }) {
-    throw UnimplementedError('cancel() has not been implemented.');
-  }
+  });
 
-  Future<String?> activateStone({
+  Future<void> activateStone({
     required String appName,
     required String stoneCode,
     required List<String> stoneKeys,
-  }) {
-    throw UnimplementedError('activateStone() has not been implemented.');
-  }
+  });
 
-  Future<String?> printFile(String imgBase64) {
-    throw UnimplementedError('printFile() has not been implemented.');
-  }
+  Future<void> printFile(String imgBase64);
 
-  Future<String?> print(List<ItemPrintModel> items) {
-    throw UnimplementedError('print() has not been implemented.');
-  }
+  Future<void> print(List<ItemPrintModel> items);
 
-  Future<String?> printReceipt(TypeOwnerPrintEnum type) {
-    throw UnimplementedError('printReceipt() has not been implemented.');
-  }
+  Future<void> printReceipt(TypeOwnerPrintEnum type);
+
+  Future<Transaction> capture({
+    required String transactionId,
+  });
 }
