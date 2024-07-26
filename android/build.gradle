@@ -1,10 +1,10 @@
-group 'dev.ltag.stone_payments'
+ group 'dev.ltag.stone_payments'
 version '1.0-SNAPSHOT'
 
 buildscript {
     ext {
         kotlin_version = '1.6.10'        
-        stone_sdk_version = '4.8.7'
+        stone_sdk_version = '4.9.2'
 
         localProp = new Properties()
         fileName = 'local.properties'
