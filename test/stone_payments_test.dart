@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -19,7 +20,8 @@ class MockStonePaymentsPlatform
   Future<String?> activateStone(
       {required String appName,
       required String stoneCode,
-      required List<String> stoneKeys}) {
+      String? qrCodeAuthorization,
+      String? qrCodeProviderId}) {
     return Future.value('Activated');
   }
 
@@ -27,7 +29,7 @@ class MockStonePaymentsPlatform
   Stream<StatusTransaction> get onPaymentStatus => const Stream.empty();
 
   @override
-  Stream<String> get onQRCode => Stream.value("");
+  Stream<Uint8List> get onQRCode => const Stream.empty();
 
   @override
   Future<String?> printFile(String imgBase64) {

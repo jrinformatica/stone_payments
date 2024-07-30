@@ -3,6 +3,7 @@ package dev.ltag.stone_payments
 import android.app.Activity
 import android.content.Context
 import br.com.stone.posandroid.providers.PosTransactionProvider
+import dev.ltag.stone_payments.model.MyResult
 import dev.ltag.stone_payments.usecases.ActivateUsecase
 import dev.ltag.stone_payments.usecases.PaymentUsecase
 import dev.ltag.stone_payments.usecases.PrinterUsecase
@@ -35,9 +36,10 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
     }
 
     override fun onMethodCall(call: MethodCall, result: Res) {
-        val activateUsecase = ActivateUsecase(context)
-        val paymentUsecase = PaymentUsecase(this)
-        val printerUsecase = PrinterUsecase(this)
+        val myResult = MyResult(result)
+        val activateUsecase = ActivateUsecase(context, myResult)
+        val paymentUsecase = PaymentUsecase(this, myResult)
+        val printerUsecase = PrinterUsecase(this, myResult)
 
         when (call.method) {
             "activateStone" -> {
@@ -45,10 +47,11 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                     activateUsecase.doActivate(
                         call.argument("appName")!!,
                         call.argument("stoneCode")!!,
-                        call.argument("stoneKeys")!!, result
+                        call.argument("qrCodeAuthorization"),
+                        call.argument("qrCodeProviderId"),
                     )
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot Activate", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
 
@@ -58,48 +61,48 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                         call.argument("value")!!,
                         call.argument("typeTransaction")!!,
                         call.argument("installment")!!,
-                        call.argument("printReceipt"), result
+                        call.argument("printReceipt")
                     )
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot Pay", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot Pay", e.toString())
                 }
             }
 
             "abortPayment" -> {
                 try {
-                    paymentUsecase.abortPayment(result)
+                    paymentUsecase.abortPayment()
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot Abort", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot Abort", e.toString())
                 }
             }
 
             "printFile" -> {
                 try {
                     printerUsecase.printFile(
-                        call.argument("imgBase64")!!, result
+                        call.argument("imgBase64")!!
                     )
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot Activate", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
 
             "print" -> {
                 try {
                     printerUsecase.print(
-                        call.argument("items")!!, result
+                        call.argument("items")!!
                     )
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot Activate", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
 
             "printReceipt" -> {
                 try {
                     printerUsecase.printReceipt(
-                        call.argument("type")!!, result
+                        call.argument("type")!!
                     )
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot Activate", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
                 }
             }
 
@@ -107,25 +110,24 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
                 try {
                     paymentUsecase.cancel(
                         call.argument("acquirerTransactionKey")!!,
-                        call.argument("printReceipt"),
-                        result
+                        call.argument("printReceipt")
                     )
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot cancel", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot cancel", e.toString())
                 }
             }
 
             "capture" -> {
                 try {
-                    paymentUsecase.captureTransaction(call.argument("transactionId")!!, result)
+                    paymentUsecase.captureTransaction(call.argument("transactionId")!!)
                 } catch (e: Exception) {
-                    result.error("UNAVAILABLE", "Cannot capture", e.toString())
+                    myResult.error("UNAVAILABLE", "Cannot capture", e.toString())
                 }
 
             }
 
             else -> {
-                result.notImplemented()
+                myResult.notImplemented()
             }
         }
     }

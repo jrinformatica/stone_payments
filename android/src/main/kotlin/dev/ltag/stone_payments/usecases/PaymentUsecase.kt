@@ -1,13 +1,15 @@
 package dev.ltag.stone_payments.usecases
 
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Base64
 import android.util.Log
+import androidx.annotation.RequiresApi
 import br.com.stone.posandroid.providers.PosPrintReceiptProvider
 import br.com.stone.posandroid.providers.PosTransactionProvider
 import dev.ltag.stone_payments.StonePaymentsPlugin
+import dev.ltag.stone_payments.model.MyResult
 import io.flutter.plugin.common.MethodChannel
 import stone.application.enums.Action
 import stone.application.enums.InstalmentTransactionEnum
@@ -20,12 +22,13 @@ import stone.database.transaction.TransactionDAO
 import stone.database.transaction.TransactionObject
 import stone.providers.CancellationProvider
 import stone.providers.CaptureTransactionProvider
+import stone.providers.ReversalProvider
 import stone.utils.Stone
 import java.io.ByteArrayOutputStream
 
 
 class PaymentUsecase(
-    private val stonePayments: StonePaymentsPlugin,
+    private val stonePayments: StonePaymentsPlugin, private val result: MyResult
 ) {
     private val context = stonePayments.context
     private val tag: String = "STONE_PAYMENTS"
@@ -58,14 +61,30 @@ class PaymentUsecase(
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun reverseTransactionsWithError() {
+        val reversalProvider = ReversalProvider(context)
+
+        reversalProvider.connectionCallback = object : StoneCallbackInterface {
+            override fun onSuccess() {
+                Log.d(tag, "ReversalProvider success")
+            }
+
+            override fun onError() {
+                Log.e(tag, "ReversalProvider error ")
+            }
+        }
+        reversalProvider.execute()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
     fun doPayment(
         value: Double,
         type: Int,
-        installment: Int,
-        print: Boolean?,
-        result: MethodChannel.Result,
+        installment: Int, print: Boolean?
     ) {
         try {
+            reverseTransactionsWithError()
             stonePayments.transactionObject = TransactionObject()
 
             val transactionObject = stonePayments.transactionObject
@@ -83,29 +102,23 @@ class PaymentUsecase(
                 transactionObject,
                 Stone.getUserModel(0),
             )
-
             val provider = stonePayments.providerPosTransaction!!
-
             provider.setConnectionCallback(object : StoneActionCallback {
 
                 override fun onSuccess() {
                     if (provider.transactionStatus == TransactionStatusEnum.APPROVED && print == true) {
                         printReceipt(transactionObject)
                     }
-                    stonePayments.providerPosTransaction = null
                     result.success(transactionObject.toJson())
                 }
 
                 override fun onError() {
                     Log.d(tag, "ERROR")
-
                     result.error(
-                        provider.authorizationCode,
-                        provider.messageFromAuthorize,
-                        provider.transactionStatus.name
+                        provider.authorizationCode ?: "ERROR",
+                        provider.transactionStatus.name,
+                        provider.messageFromAuthorize
                     )
-
-                    stonePayments.providerPosTransaction = null
                 }
 
                 override fun onStatusChanged(status: Action?) {
@@ -147,12 +160,8 @@ class PaymentUsecase(
         posPrintReceiptProvider.execute()
     }
 
-    fun abortPayment(result: MethodChannel.Result) {
+    fun abortPayment() {
         try {
-            if (stonePayments.providerPosTransaction == null) {
-                result.success(false)
-                return
-            }
             stonePayments.providerPosTransaction?.abortPayment()
             result.success(true)
 
@@ -164,7 +173,6 @@ class PaymentUsecase(
 
     fun captureTransaction(
         transactionId: String,
-        result: MethodChannel.Result
     ) {
         val transactionDAO = TransactionDAO(context)
         val selectedTransaction =
@@ -195,9 +203,7 @@ class PaymentUsecase(
     }
 
     fun cancel(
-        acquirerTransactionKey: String,
-        print: Boolean?,
-        result: MethodChannel.Result
+        acquirerTransactionKey: String, print: Boolean?
     ) {
         try {
             val transactionDAO = TransactionDAO(context)
@@ -281,14 +287,13 @@ class PaymentUsecase(
                 StonePaymentsPlugin.flutterBinaryMessenger!!,
                 "stone_payments",
             )
-            channel.invokeMethod("qrcode", BitMapToString(message))
+            channel.invokeMethod("qrcode", bitMapToImagePngBytes(message))
         }
     }
 
-    fun BitMapToString(bitmap: Bitmap): String {
+    private fun bitMapToImagePngBytes(bitmap: Bitmap): ByteArray {
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
-        val b = baos.toByteArray()
-        return Base64.encodeToString(b, Base64.DEFAULT)
+        return baos.toByteArray()
     }
 }

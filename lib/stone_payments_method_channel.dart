@@ -17,12 +17,12 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   final methodChannel = const MethodChannel('stone_payments');
 
   final _paymentController = StreamController<StatusTransaction>.broadcast();
-  final _qrcodeController = StreamController<String>.broadcast();
+  final _qrcodeController = StreamController<Uint8List>.broadcast();
   @override
   Stream<StatusTransaction> get onPaymentStatus => _paymentController.stream;
 
   @override
-  Stream<String> get onQRCode => _qrcodeController.stream;
+  Stream<Uint8List> get onQRCode => _qrcodeController.stream;
 
   MethodChannelStonePayments() {
     methodChannel.setMethodCallHandler((call) async {
@@ -32,7 +32,7 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
           _paymentController.add(statusTransactionEnumMap[status]!);
           break;
         case 'qrcode':
-          _qrcodeController.add(call.arguments.replaceAll("\n", ""));
+          _qrcodeController.add(call.arguments);
           break;
       }
     });
@@ -52,7 +52,7 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
         'value': value,
         'typeTransaction': typeTransaction.value,
         'installment': installment,
-        'printReceipt': false, //TODO: MUDAR DEPOIS
+        'printReceipt': printReceipt,
       },
     ));
 
@@ -88,14 +88,16 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   Future<void> activateStone({
     required String appName,
     required String stoneCode,
-    List<String> stoneKeys = const [],
+    String? qrCodeAuthorization,
+    String? qrCodeProviderId,
   }) async {
     final result = await methodChannel.invokeMethod(
       'activateStone',
       <String, dynamic>{
         'appName': appName,
         'stoneCode': stoneCode,
-        'stoneKeys': stoneKeys,
+        'qrCodeAuthorization': qrCodeAuthorization,
+        'qrCodeProviderId': qrCodeProviderId,
       },
     );
 

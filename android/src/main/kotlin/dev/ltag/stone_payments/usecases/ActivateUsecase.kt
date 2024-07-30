@@ -2,7 +2,7 @@ package dev.ltag.stone_payments.usecases
 
 import android.content.Context
 import android.util.Log
-import io.flutter.plugin.common.MethodChannel
+import dev.ltag.stone_payments.model.MyResult
 import stone.application.StoneStart
 import stone.application.interfaces.StoneCallbackInterface
 import stone.providers.ActiveApplicationProvider
@@ -12,27 +12,26 @@ import stone.utils.keys.StoneKeyType
 
 class ActivateUsecase(
     private val context: Context,
+    private val result: MyResult,
 ) {
     fun doActivate(
         appName: String,
         stoneCode: String,
-        stoneKeys: List<String>,
-        result: MethodChannel.Result
+        qrCodeAuthorization: String?,
+        qrCodeProviderId: String?
     ) {
         Stone.setAppName(appName)
 
-        if (stoneKeys.isNotEmpty() && stoneKeys.size != 2) {
-            result.error("ERROR", "Invalid Stone Keys", "Invalid Stone Keys")
-            return
-        }
 
-        val stoneKeysHashed: HashMap<StoneKeyType, String> = HashMap<StoneKeyType, String>()
-        if(stoneKeys.size == 2){
-            stoneKeysHashed[StoneKeyType.QRCODE_AUTHORIZATION] = stoneKeys[0]
-            stoneKeysHashed[StoneKeyType.QRCODE_PROVIDERID] = stoneKeys[1]
+        val userList: List<UserModel>?
+        if (qrCodeAuthorization != null && qrCodeProviderId != null) {
+            val stoneKeysHashed = HashMap<StoneKeyType, String>()
+            stoneKeysHashed[StoneKeyType.QRCODE_AUTHORIZATION] = qrCodeAuthorization
+            stoneKeysHashed[StoneKeyType.QRCODE_PROVIDERID] = qrCodeProviderId
+            userList = StoneStart.init(context, stoneKeysHashed)
+        } else {
+            userList = StoneStart.init(context)
         }
-        
-        val userList: List<UserModel>? = StoneStart.init(context, stoneKeysHashed)
 
         if (userList == null) {
             val activeApplicationProvider = ActiveApplicationProvider(context)

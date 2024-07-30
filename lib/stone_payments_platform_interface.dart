@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
@@ -30,7 +32,7 @@ abstract class StonePaymentsPlatform extends PlatformInterface {
 
   Stream<StatusTransaction> get onPaymentStatus;
 
-  Stream<String> get onQRCode;
+  Stream<Uint8List> get onQRCode;
 
   Future<Transaction> payment({
     required double value,
@@ -53,7 +55,8 @@ abstract class StonePaymentsPlatform extends PlatformInterface {
   Future<void> activateStone({
     required String appName,
     required String stoneCode,
-    required List<String> stoneKeys,
+    String? qrCodeAuthorization,
+    String? qrCodeProviderId,
   });
 
   Future<void> printFile(String imgBase64);

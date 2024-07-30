@@ -14,12 +14,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final stonePaymentsPlugin = StonePayments();
   await stonePaymentsPlugin.activateStone(
-      appName: 'My App',
-      stoneCode: '12345678',
-      stoneKeys: [
-        "e49da9d6-79dc-4316-957a-b63d0a7b21a8",
-        "6947bd9d-2cff-4ee7-b302-a3ed642b20f5"
-      ]);
+    appName: 'My App',
+    stoneCode: '12345678',
+    qrCodeAuthorization: "e49da9d6-79dc-4316-957a-b63d0a7b21a8",
+    qrCodeProviderId: "6947bd9d-2cff-4ee7-b302-a3ed642b20f5",
+  );
 
   runApp(const MyApp());
 }
@@ -36,16 +35,16 @@ class _MyAppState extends State<MyApp> {
   String text = 'Running';
   late StreamSubscription<StatusTransaction> listen;
   String transactionStored = "";
-  String qrcode = "";
+  Uint8List? qrcode;
 
   @override
   void initState() {
-    listen = stonePaymentsPlugin.onMessageListener((message) {
+    listen = stonePaymentsPlugin.onPaymentStatusStream.listen((message) {
       setState(() {
         text = message.name;
       });
     });
-    stonePaymentsPlugin.onQRCodeListener((qrcode) {
+    stonePaymentsPlugin.onQRCodeStream.listen((qrcode) {
       setState(() {
         this.qrcode = qrcode;
       });
@@ -53,8 +52,8 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  Image imageFromBase64String(String base64String) {
-    return Image.memory(base64.decode(base64String.split(',').last));
+  Image imageFromBase64String(Uint8List base64String) {
+    return Image.memory(base64String);
   }
 
   @override
@@ -145,7 +144,7 @@ class _MyAppState extends State<MyApp> {
                 },
                 child: const Text('Cancel'),
               ),
-              if (qrcode != "") imageFromBase64String(qrcode),
+              if (qrcode != null) imageFromBase64String(qrcode!),
               ElevatedButton(
                 onPressed: () async {
                   try {

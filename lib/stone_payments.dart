@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'dart:typed_data';
 
-import 'package:flutter/widgets.dart';
 import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/models/transaction.dart';
@@ -72,12 +72,14 @@ class StonePayments {
   Future<void> activateStone({
     required String appName,
     required String stoneCode,
-    List<String> stoneKeys = const [],
+    String? qrCodeAuthorization,
+    String? qrCodeProviderId,
   }) {
     return StonePaymentsPlatform.instance.activateStone(
       appName: appName,
       stoneCode: stoneCode,
-      stoneKeys: stoneKeys,
+      qrCodeAuthorization: qrCodeAuthorization,
+      qrCodeProviderId: qrCodeProviderId,
     );
   }
 
@@ -120,13 +122,8 @@ class StonePayments {
   /// Retorna:
   ///
   /// * Uma função que retorna um [StreamSubscription<String>] para escutar as mensagens da plataforma da Stone.
-  StreamSubscription<StatusTransaction> Function(
-    ValueChanged<StatusTransaction>?, {
-    bool? cancelOnError,
-    VoidCallback? onDone,
-    Function? onError,
-  }) get onMessageListener =>
-      StonePaymentsPlatform.instance.onPaymentStatus.listen;
+  Stream<StatusTransaction> get onPaymentStatusStream =>
+      StonePaymentsPlatform.instance.onPaymentStatus;
 
   /// Retorna um [StreamSubscription] que escuta as mensagens da plataforma da Stone.
   ///
@@ -140,12 +137,8 @@ class StonePayments {
   /// Retorna:
   ///
   /// * Uma função que retorna um [StreamSubscription<String>] para escutar as mensagens da plataforma da Stone.
-  StreamSubscription Function(
-    ValueChanged<String>?, {
-    bool? cancelOnError,
-    VoidCallback? onDone,
-    Function? onError,
-  }) get onQRCodeListener => StonePaymentsPlatform.instance.onQRCode.listen;
+  Stream<Uint8List> get onQRCodeStream =>
+      StonePaymentsPlatform.instance.onQRCode;
 
   /// Imprime o comprovante de pagamento.
   ///

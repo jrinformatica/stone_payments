@@ -4,16 +4,17 @@ import android.util.Log
 import br.com.stone.posandroid.providers.PosPrintProvider
 import br.com.stone.posandroid.providers.PosPrintReceiptProvider
 import dev.ltag.stone_payments.StonePaymentsPlugin
-import io.flutter.plugin.common.MethodChannel
+import dev.ltag.stone_payments.model.MyResult
 import stone.application.enums.ReceiptType
 import stone.application.interfaces.StoneCallbackInterface
 
 class PrinterUsecase(
     private val stonePayments: StonePaymentsPlugin,
+    private val result: MyResult,
 ) {
     private val context = stonePayments.context
 
-    fun printFile(imgBase64: String, result: MethodChannel.Result) {
+    fun printFile(imgBase64: String) {
         try {
             val posPrintProvider = PosPrintProvider(context)
             posPrintProvider.addBase64Image(imgBase64)
@@ -26,7 +27,7 @@ class PrinterUsecase(
         }
     }
 
-    fun print(items: List<Map<String, Any>>, result: MethodChannel.Result) {
+    fun print(items: List<Map<String, Any>>) {
         try {
             val posPrintProvider = PosPrintProvider(context)
             for (item in items) {
@@ -46,7 +47,7 @@ class PrinterUsecase(
 
     }
 
-    fun printReceipt(type: Int, result: MethodChannel.Result) {
+    fun printReceipt(type: Int) {
 
         val transactionObject = stonePayments.transactionObject
 
