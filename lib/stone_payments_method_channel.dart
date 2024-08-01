@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/models/transaction.dart';
@@ -16,8 +17,9 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('stone_payments');
 
-  final _paymentController = StreamController<StatusTransaction>.broadcast();
-  final _qrcodeController = StreamController<Uint8List>.broadcast();
+  final _paymentController = BehaviorSubject<StatusTransaction>();
+  final _qrcodeController = BehaviorSubject<Uint8List>();
+
   @override
   Stream<StatusTransaction> get onPaymentStatus => _paymentController.stream;
 
