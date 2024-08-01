@@ -43,87 +43,54 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
 
         when (call.method) {
             "activateStone" -> {
-                try {
-                    activateUsecase.doActivate(
-                        call.argument("appName")!!,
-                        call.argument("stoneCode")!!,
-                        call.argument("qrCodeAuthorization"),
-                        call.argument("qrCodeProviderId"),
-                    )
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
-                }
+                activateUsecase.doActivate(
+                    call.argument("appName")!!,
+                    call.argument("stoneCode")!!,
+                    call.argument("qrCodeAuthorization"),
+                    call.argument("qrCodeProviderId"),
+                )
             }
 
             "payment" -> {
-                try {
-                    paymentUsecase.doPayment(
-                        call.argument("value")!!,
-                        call.argument("typeTransaction")!!,
-                        call.argument("installment")!!,
-                        call.argument("printReceipt")
-                    )
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot Pay", e.toString())
-                }
+                paymentUsecase.doPayment(
+                    call.argument("value")!!,
+                    call.argument("typeTransaction")!!,
+                    call.argument("installment")!!,
+                    call.argument("printReceipt")
+                )
             }
 
             "abortPayment" -> {
-                try {
-                    paymentUsecase.abortPayment()
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot Abort", e.toString())
-                }
+                paymentUsecase.abortPayment()
             }
 
             "printFile" -> {
-                try {
-                    printerUsecase.printFile(
-                        call.argument("imgBase64")!!
-                    )
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
-                }
+                printerUsecase.printFile(
+                    call.argument("imgBase64")!!
+                )
             }
 
             "print" -> {
-                try {
-                    printerUsecase.print(
-                        call.argument("items")!!
-                    )
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
-                }
+                printerUsecase.print(
+                    call.argument("items")!!
+                )
             }
 
             "printReceipt" -> {
-                try {
-                    printerUsecase.printReceipt(
-                        call.argument("type")!!
-                    )
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot Activate", e.toString())
-                }
+                printerUsecase.printReceipt(
+                    call.argument("type")!!
+                )
             }
 
             "cancel-payment" -> {
-                try {
-                    paymentUsecase.cancel(
-                        call.argument("acquirerTransactionKey")!!,
-                        call.argument("printReceipt")
-                    )
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot cancel", e.toString())
-                }
+                paymentUsecase.cancel(
+                    call.argument("acquirerTransactionKey")!!,
+                    call.argument("printReceipt")
+                )
             }
 
             "capture" -> {
-                try {
-                    paymentUsecase.captureTransaction(call.argument("transactionId")!!)
-                } catch (e: Exception) {
-                    myResult.error("UNAVAILABLE", "Cannot capture", e.toString())
-                }
-
+                paymentUsecase.captureTransaction(call.argument("transactionId")!!)
             }
 
             else -> {
