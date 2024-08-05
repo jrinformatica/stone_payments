@@ -152,4 +152,10 @@ class StonePayments {
   Future<void> printReceipt(TypeOwnerPrintEnum type) {
     return StonePaymentsPlatform.instance.printReceipt(type);
   }
+
+  Future<Transaction> capture({required String acquirerTransactionKey}) {
+    return StonePaymentsPlatform.instance.capture(
+      acquirerTransactionKey: acquirerTransactionKey,
+    );
+  }
 }

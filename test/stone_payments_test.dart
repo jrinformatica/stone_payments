@@ -70,7 +70,7 @@ class MockStonePaymentsPlatform
   }
 
   @override
-  Future<Transaction> capture({required String transactionId}) {
+  Future<Transaction> capture({required String acquirerTransactionKey}) {
     return Future.value(Transaction());
   }
 }

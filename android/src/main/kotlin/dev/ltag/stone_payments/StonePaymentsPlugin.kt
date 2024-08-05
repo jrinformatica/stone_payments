@@ -90,7 +90,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
             }
 
             "capture" -> {
-                paymentUsecase.captureTransaction(call.argument("transactionId")!!)
+                paymentUsecase.captureTransaction(call.argument("acquirerTransactionKey")!!)
             }
 
             else -> {

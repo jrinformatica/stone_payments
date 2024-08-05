@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:stone_payments/enums/type_transaction_enum.dart';
 import 'package:stone_payments/models/transaction_status_enum.dart';
 
 part 'transaction.g.dart';
@@ -8,9 +9,9 @@ class Transaction {
   final String acquirerTransactionKey;
   final String? initiatorTransactionKey;
   final String amount;
-  final String typeOfTransaction;
+  final TypeTransactionEnum typeOfTransaction;
   final String instalmentTransaction;
-  final String instalmentType;
+  final String? instalmentType;
   final String? cardHolderNumber;
   final String? cardBrandName;
   final String? cardHolderName;
@@ -33,7 +34,7 @@ class Transaction {
     this.acquirerTransactionKey = "",
     this.initiatorTransactionKey = "",
     this.amount = "",
-    this.typeOfTransaction = "",
+    this.typeOfTransaction = TypeTransactionEnum.credit,
     this.instalmentTransaction = "",
     this.instalmentType = "",
     this.cardHolderNumber = "",

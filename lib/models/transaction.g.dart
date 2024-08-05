@@ -10,7 +10,9 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       acquirerTransactionKey: json['acquirerTransactionKey'] as String? ?? "",
       initiatorTransactionKey: json['initiatorTransactionKey'] as String? ?? "",
       amount: json['amount'] as String? ?? "",
-      typeOfTransaction: json['typeOfTransaction'] as String? ?? "",
+      typeOfTransaction: $enumDecodeNullable(
+              _$TypeTransactionEnumEnumMap, json['typeOfTransaction']) ??
+          TypeTransactionEnum.credit,
       instalmentTransaction: json['instalmentTransaction'] as String? ?? "",
       instalmentType: json['instalmentType'] as String? ?? "",
       cardHolderNumber: json['cardHolderNumber'] as String? ?? "",
@@ -39,7 +41,8 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'acquirerTransactionKey': instance.acquirerTransactionKey,
       'initiatorTransactionKey': instance.initiatorTransactionKey,
       'amount': instance.amount,
-      'typeOfTransaction': instance.typeOfTransaction,
+      'typeOfTransaction':
+          _$TypeTransactionEnumEnumMap[instance.typeOfTransaction]!,
       'instalmentTransaction': instance.instalmentTransaction,
       'instalmentType': instance.instalmentType,
       'cardHolderNumber': instance.cardHolderNumber,
@@ -61,6 +64,14 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'subMerchantCategoryCode': instance.subMerchantCategoryCode,
       'subMerchantAddress': instance.subMerchantAddress,
     };
+
+const _$TypeTransactionEnumEnumMap = {
+  TypeTransactionEnum.debit: 0,
+  TypeTransactionEnum.credit: 1,
+  TypeTransactionEnum.voucher: 2,
+  TypeTransactionEnum.instantPayment: 3,
+  TypeTransactionEnum.pix: 4,
+};
 
 const _$TransactionStatusEnumEnumMap = {
   TransactionStatusEnum.unknown: 'UNKNOWN',

@@ -214,5 +214,5 @@ fun getMessageFromEnum(enum: ErrorsEnum): String {
         DATA_CONTAINER_CONSTRAINT_ERROR -> "Erro desconhecido"
         DATA_CONTAINER_INTEGRATION_ERROR -> TODO()
         GENERIC_ERROR -> "Erro genérico"
-    }+ " (${enum.name})."
+    } + " (${enum.name})."
 }

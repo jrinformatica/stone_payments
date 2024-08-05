@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
+import 'package:stone_payments/exceptions/stone_exception.dart';
 import 'package:stone_payments/models/transaction.dart';
 
 import 'enums/type_transaction_enum.dart';
@@ -47,18 +48,22 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
     int installment = 1,
     bool? printReceipt,
   }) async {
-    final Map<String, dynamic>? json =
-        Map<String, dynamic>.from(await methodChannel.invokeMethod(
-      'payment',
-      <String, dynamic>{
-        'value': value,
-        'typeTransaction': typeTransaction.value,
-        'installment': installment,
-        'printReceipt': printReceipt,
-      },
-    ));
+    try {
+      final Map<String, dynamic> json =
+          Map<String, dynamic>.from(await methodChannel.invokeMethod(
+        'payment',
+        <String, dynamic>{
+          'value': value,
+          'typeTransaction': typeTransaction.index,
+          'installment': installment,
+          'printReceipt': printReceipt,
+        },
+      ));
 
-    return Transaction.fromJson(json!);
+      return Transaction.fromJson(json);
+    } on PlatformException catch (e) {
+      throw StoneException.fromPlatformException(e);
+    }
   }
 
   @override
@@ -144,12 +149,12 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   }
 
   @override
-  Future<Transaction> capture({required String transactionId}) async {
+  Future<Transaction> capture({required String acquirerTransactionKey}) async {
     final Map<String, dynamic> json =
         Map<String, dynamic>.from(await methodChannel.invokeMethod(
       'capture',
       <String, dynamic>{
-        'transactionId': transactionId,
+        'acquirerTransactionKey': acquirerTransactionKey,
       },
     ));
 

@@ -4,6 +4,7 @@ import android.util.Log
 import br.com.stone.posandroid.providers.PosPrintProvider
 import br.com.stone.posandroid.providers.PosPrintReceiptProvider
 import dev.ltag.stone_payments.StonePaymentsPlugin
+import dev.ltag.stone_payments.helper.getMessageOfErrorInPortuguese
 import dev.ltag.stone_payments.model.MyResult
 import stone.application.enums.ReceiptType
 import stone.application.interfaces.StoneCallbackInterface
@@ -71,9 +72,13 @@ class PrinterUsecase(
             }
 
             override fun onError() {
-                val e = "Erro ao imprimir"
+
                 Log.d("ERRORPRINT", transactionObject.toString())
-                result.error("ERROR", "Error on Print", e)
+                result.error(
+                    "ERROR",
+                    posPrintReceiptProvider.getMessageOfErrorInPortuguese(),
+                    ""
+                )
             }
         }
 

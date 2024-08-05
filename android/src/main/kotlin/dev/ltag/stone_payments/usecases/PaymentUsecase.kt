@@ -1,14 +1,13 @@
 package dev.ltag.stone_payments.usecases
 
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.RequiresApi
 import br.com.stone.posandroid.providers.PosPrintReceiptProvider
 import br.com.stone.posandroid.providers.PosTransactionProvider
 import dev.ltag.stone_payments.StonePaymentsPlugin
+import dev.ltag.stone_payments.helper.getMessageOfErrorInPortuguese
 import dev.ltag.stone_payments.model.MyResult
 import io.flutter.plugin.common.MethodChannel
 import stone.application.enums.Action
@@ -38,9 +37,9 @@ class PaymentUsecase(
             "acquirerTransactionKey" to acquirerTransactionKey,
             "initiatorTransactionKey" to initiatorTransactionKey,
             "amount" to amount,
-            "typeOfTransaction" to typeOfTransaction.name,
+            "typeOfTransaction" to typeOfTransaction.ordinal,
             "instalmentTransaction" to instalmentTransaction.name,
-            "instalmentType" to instalmentType.name,
+            "instalmentType" to instalmentType?.name,
             "cardHolderNumber" to cardHolderNumber,
             "cardBrandName" to cardBrandName,
             "cardHolderName" to cardHolderName,
@@ -48,7 +47,7 @@ class PaymentUsecase(
             "transactionStatus" to transactionStatus.name,
             "date" to date,
             "time" to time,
-            "entryMode" to entryMode.toString(),
+            "entryMode" to entryMode?.toString(),
             "aid" to aid,
             "arcq" to arcq,
             "shortName" to shortName,
@@ -61,30 +60,29 @@ class PaymentUsecase(
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun reverseTransactionsWithError() {
-        val reversalProvider = ReversalProvider(context)
+    private fun reverseTransactionsWithError() {
+        try {
+            val reversalProvider = ReversalProvider(context)
 
-        reversalProvider.connectionCallback = object : StoneCallbackInterface {
-            override fun onSuccess() {
-                Log.d(tag, "ReversalProvider success")
-            }
+            reversalProvider.connectionCallback = object : StoneCallbackInterface {
+                override fun onSuccess() {
+                    Log.d(tag, "ReversalProvider success")
+                }
 
-            override fun onError() {
-                Log.e(tag, "ReversalProvider error ")
+                override fun onError() {
+                    Log.e(tag, "ReversalProvider error ")
+                }
             }
+            reversalProvider.execute()
+        } catch (e: Exception) {
+            Log.e(tag, e.toString())
         }
-        reversalProvider.execute()
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun doPayment(
-        value: Double,
-        type: Int,
-        installment: Int, print: Boolean?
+        value: Double, type: Int, installment: Int, print: Boolean?
     ) {
         try {
-            reverseTransactionsWithError()
             stonePayments.transactionObject = TransactionObject()
 
             val transactionObject = stonePayments.transactionObject
@@ -113,11 +111,11 @@ class PaymentUsecase(
                 }
 
                 override fun onError() {
-                    Log.d(tag, "ERROR")
+                    Log.d(tag, "PAYMENT_ERROR")
                     result.error(
-                        provider.authorizationCode ?: "ERROR",
-                        provider.transactionStatus.name,
-                        provider.messageFromAuthorize
+                        "PAYMENT_ERROR",
+                        provider.getMessageOfErrorInPortuguese(),
+                        transactionObject.toJson()
                     )
                 }
 
@@ -132,19 +130,17 @@ class PaymentUsecase(
             provider.execute()
         } catch (exception: Exception) {
             Log.d(tag, exception.toString())
-            result.error("ERROR", exception.message, exception.stackTrace.toString())
+            result.error("ERROR", exception.message, exception.stackTraceToString())
         }
     }
 
     private fun printReceipt(transactionObject: TransactionObject) {
-        val posPrintReceiptProvider =
-            PosPrintReceiptProvider(
-                context, transactionObject,
-                ReceiptType.MERCHANT,
-            )
+        val posPrintReceiptProvider = PosPrintReceiptProvider(
+            context, transactionObject,
+            ReceiptType.MERCHANT,
+        )
 
-        posPrintReceiptProvider.connectionCallback = object :
-            StoneCallbackInterface {
+        posPrintReceiptProvider.connectionCallback = object : StoneCallbackInterface {
 
             override fun onSuccess() {
 
@@ -164,42 +160,45 @@ class PaymentUsecase(
         try {
             stonePayments.providerPosTransaction?.abortPayment()
             result.success(true)
-
         } catch (exception: Exception) {
             Log.d("ERROR", exception.toString())
-            result.error("ERROR", exception.message, exception.stackTrace.toString())
+
+            result.error("ERROR", exception.message, exception.stackTraceToString())
         }
     }
 
     fun captureTransaction(
-        transactionId: String,
+        acquirerTransactionKey: String,
     ) {
-        val transactionDAO = TransactionDAO(context)
-        val selectedTransaction =
-            transactionDAO.findTransactionWithInitiatorTransactionKey(transactionId)
-        if (selectedTransaction == null) {
-            result.error("NOT FOUND", "NOT FOUND", "NOT FOUND")
-            return
-        }
-        if (selectedTransaction.isCapture) {
-            result.success(true)
-            return
-        }
-        val provider = CaptureTransactionProvider(context, selectedTransaction)
-        provider.connectionCallback = object : StoneCallbackInterface {
-
-            override fun onSuccess() {
-                result.success(true)
+        try {
+            val transactionDAO = TransactionDAO(context)
+            val selectedTransaction = transactionDAO.findTransactionWithAtk(acquirerTransactionKey)
+            if (selectedTransaction == null) {
+                result.error("ERROR", "NOT FOUND", "NOT FOUND")
+                return
             }
-
-            override fun onError() {
-                Log.d("RESULT", "ERROR")
-
-                result.error("ERROR", provider.messageFromAuthorize, "ERROR")
+            if (selectedTransaction.isCapture) {
+                result.success(selectedTransaction.toJson())
+                return
             }
-        }
-        provider.execute()
+            val provider = CaptureTransactionProvider(context, selectedTransaction)
+            provider.connectionCallback = object : StoneCallbackInterface {
 
+                override fun onSuccess() {
+                    result.success(selectedTransaction.toJson())
+                }
+
+                override fun onError() {
+                    Log.d("RESULT", "ERROR")
+
+                    result.error("ERROR", provider.getMessageOfErrorInPortuguese(), "ERROR")
+                }
+            }
+            provider.execute()
+        } catch (e: Exception) {
+            Log.d("ERROR", e.toString())
+            result.error("ERROR", e.message, e.stackTraceToString())
+        }
     }
 
     fun cancel(
@@ -207,10 +206,9 @@ class PaymentUsecase(
     ) {
         try {
             val transactionDAO = TransactionDAO(context)
-            val selectedTransaction =
-                transactionDAO.findTransactionWithAtk(acquirerTransactionKey)
+            val selectedTransaction = transactionDAO.findTransactionWithAtk(acquirerTransactionKey)
 
-            if(selectedTransaction == null) {
+            if (selectedTransaction == null) {
                 result.error("NOT FOUND", "NOT FOUND", "NOT FOUND")
                 return
             }
@@ -225,26 +223,25 @@ class PaymentUsecase(
                 override fun onSuccess() {
                     try {
                         if (print == true) {
-                            val posPrintReceiptProvider =
-                                PosPrintReceiptProvider(
-                                    context, selectedTransaction,
-                                    ReceiptType.MERCHANT,
-                                )
+                            val posPrintReceiptProvider = PosPrintReceiptProvider(
+                                context, selectedTransaction,
+                                ReceiptType.MERCHANT,
+                            )
 
-                            posPrintReceiptProvider.connectionCallback = object :
-                                StoneCallbackInterface {
+                            posPrintReceiptProvider.connectionCallback =
+                                object : StoneCallbackInterface {
 
-                                override fun onSuccess() {
+                                    override fun onSuccess() {
 
-                                    Log.d("SUCCESS", selectedTransaction.toString())
+                                        Log.d("SUCCESS", selectedTransaction.toString())
 
+                                    }
+
+                                    override fun onError() {
+                                        Log.d("ERRORPRINT", selectedTransaction.toString())
+
+                                    }
                                 }
-
-                                override fun onError() {
-                                    Log.d("ERRORPRINT", selectedTransaction.toString())
-
-                                }
-                            }
 
                             posPrintReceiptProvider.execute()
                         }
@@ -258,19 +255,22 @@ class PaymentUsecase(
 
                     Log.d("RESULT", "ERROR")
 
-                    result.error("ERROR", provider.messageFromAuthorize, "ERROR")
+                    result.error(
+                        "ERROR",
+                        provider.getMessageOfErrorInPortuguese(),
+                        null,
+                    )
                 }
             }
 
             provider.execute()
-
-
         } catch (e: Exception) {
             Log.d("ERROR", e.toString())
-            result.error("ERROR", e.message, e.stackTrace.toString())
+            result.error("ERROR", e.message, e.stackTraceToString())
         }
 
     }
+
     private fun sendAPaymentStatus(status: String) {
         Handler(Looper.getMainLooper()).post {
             val channel = MethodChannel(
@@ -280,7 +280,7 @@ class PaymentUsecase(
             channel.invokeMethod("payment-status", status)
         }
     }
-    
+
     private fun sendAQRCode(message: Bitmap) {
         Handler(Looper.getMainLooper()).post {
             val channel = MethodChannel(

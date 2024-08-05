@@ -66,6 +66,6 @@ abstract class StonePaymentsPlatform extends PlatformInterface {
   Future<void> printReceipt(TypeOwnerPrintEnum type);
 
   Future<Transaction> capture({
-    required String transactionId,
+    required String acquirerTransactionKey,
   });
 }
