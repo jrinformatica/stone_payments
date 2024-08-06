@@ -90,7 +90,7 @@ class PaymentUsecase(
             transactionObject.instalmentTransaction =
                 InstalmentTransactionEnum.getAt(installment - 1)
             transactionObject.typeOfTransaction =
-                if (type == 1) TypeOfTransactionEnum.CREDIT else if (type == 2) TypeOfTransactionEnum.PIX else TypeOfTransactionEnum.DEBIT
+                TypeOfTransactionEnum.values()[type]
             transactionObject.isCapture = false
             val newValue: Int = (value * 100).toInt()
             transactionObject.amount = newValue.toString()
