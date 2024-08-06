@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/enums/type_transaction_enum.dart';
 import 'package:stone_payments/models/item_print_model.dart';
 import 'package:stone_payments/models/transaction.dart';
 
+import 'enums/action_transaciton_enum.dart';
 import 'stone_payments_method_channel.dart';
 
 abstract class StonePaymentsPlatform extends PlatformInterface {
@@ -30,7 +30,7 @@ abstract class StonePaymentsPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Stream<StatusTransaction> get onPaymentStatus;
+  Stream<ActionTransacitonEnum> get onPaymentStatus;
 
   Stream<Uint8List> get onQRCode;
 

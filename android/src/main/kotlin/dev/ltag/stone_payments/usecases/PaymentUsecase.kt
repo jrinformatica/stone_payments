@@ -277,7 +277,7 @@ class PaymentUsecase(
                 StonePaymentsPlugin.flutterBinaryMessenger!!,
                 "stone_payments",
             )
-            channel.invokeMethod("payment-status", status)
+            channel.invokeMethod("payment-action", status)
         }
     }
 

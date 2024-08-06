@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/models/transaction.dart';
 
+import 'enums/action_transaciton_enum.dart';
 import 'enums/type_transaction_enum.dart';
 import 'models/item_print_model.dart';
 import 'stone_payments_platform_interface.dart';
@@ -122,7 +122,7 @@ class StonePayments {
   /// Retorna:
   ///
   /// * Uma função que retorna um [StreamSubscription<String>] para escutar as mensagens da plataforma da Stone.
-  Stream<StatusTransaction> get onPaymentStatusStream =>
+  Stream<ActionTransacitonEnum> get onPaymentStatusStream =>
       StonePaymentsPlatform.instance.onPaymentStatus;
 
   /// Retorna um [StreamSubscription] que escuta as mensagens da plataforma da Stone.

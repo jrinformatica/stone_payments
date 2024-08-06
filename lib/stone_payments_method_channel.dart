@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/exceptions/stone_exception.dart';
 import 'package:stone_payments/models/transaction.dart';
 
+import 'enums/action_transaciton_enum.dart';
 import 'enums/type_transaction_enum.dart';
 import 'models/item_print_model.dart';
 import 'stone_payments_platform_interface.dart';
@@ -18,11 +18,12 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('stone_payments');
 
-  final _paymentController = BehaviorSubject<StatusTransaction>();
+  final _paymentController = BehaviorSubject<ActionTransacitonEnum>();
   final _qrcodeController = BehaviorSubject<Uint8List>();
 
   @override
-  Stream<StatusTransaction> get onPaymentStatus => _paymentController.stream;
+  Stream<ActionTransacitonEnum> get onPaymentStatus =>
+      _paymentController.stream;
 
   @override
   Stream<Uint8List> get onQRCode => _qrcodeController.stream;
@@ -30,9 +31,9 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   MethodChannelStonePayments() {
     methodChannel.setMethodCallHandler((call) async {
       switch (call.method) {
-        case 'payment-status':
+        case 'payment-action':
           String status = call.arguments;
-          _paymentController.add(statusTransactionEnumMap[status]!);
+          _paymentController.add(actionTransactionEnumMap[status]!);
           break;
         case 'qrcode':
           _qrcodeController.add(call.arguments);

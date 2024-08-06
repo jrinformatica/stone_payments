@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:stone_payments/enums/type_transaction_enum.dart';
-import 'package:stone_payments/models/transaction_status_enum.dart';
+import 'package:stone_payments/enums/transaction_status_enum.dart';
 
 part 'transaction.g.dart';
 

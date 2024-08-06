@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:stone_payments/enums/action_transaciton_enum.dart';
 import 'package:stone_payments/enums/item_print_type_enum.dart';
-import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/enums/type_transaction_enum.dart';
 import 'package:stone_payments/models/item_print_model.dart';
@@ -33,7 +33,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final stonePaymentsPlugin = StonePayments();
   String text = 'Running';
-  late StreamSubscription<StatusTransaction> listen;
+  late StreamSubscription<ActionTransacitonEnum> listen;
   String transactionStored = "";
   Uint8List? qrcode;
 

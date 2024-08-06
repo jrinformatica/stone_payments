@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:stone_payments/enums/action_transaciton_enum.dart';
 import 'package:stone_payments/enums/item_print_type_enum.dart';
-import 'package:stone_payments/enums/status_transaction_enum.dart';
 import 'package:stone_payments/enums/type_owner_print_enum.dart';
 import 'package:stone_payments/enums/type_transaction_enum.dart';
 import 'package:stone_payments/models/item_print_model.dart';
@@ -26,7 +26,7 @@ class MockStonePaymentsPlatform
   }
 
   @override
-  Stream<StatusTransaction> get onPaymentStatus => const Stream.empty();
+  Stream<ActionTransacitonEnum> get onPaymentStatus => const Stream.empty();
 
   @override
   Stream<Uint8List> get onQRCode => const Stream.empty();
