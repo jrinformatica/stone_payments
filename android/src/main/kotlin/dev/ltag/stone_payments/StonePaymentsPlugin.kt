@@ -38,7 +38,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
     override fun onMethodCall(call: MethodCall, result: Res) {
         val myResult = MyResult(result)
         val activateUsecase = ActivateUsecase(context, myResult)
-        val paymentUsecase = PaymentUsecase(this, myResult)
+        val paymentUsecase = PaymentUsecase(this, channel, myResult)
         val printerUsecase = PrinterUsecase(this, myResult)
 
         when (call.method) {
@@ -84,8 +84,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
 
             "cancel-payment" -> {
                 paymentUsecase.cancel(
-                    call.argument("acquirerTransactionKey")!!,
-                    call.argument("printReceipt")
+                    call.argument("acquirerTransactionKey")!!, call.argument("printReceipt")
                 )
             }
 

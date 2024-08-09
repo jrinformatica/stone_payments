@@ -27,7 +27,9 @@ import java.io.ByteArrayOutputStream
 
 
 class PaymentUsecase(
-    private val stonePayments: StonePaymentsPlugin, private val result: MyResult
+    private val stonePayments: StonePaymentsPlugin,
+    private val channel: MethodChannel,
+    private val result: MyResult
 ) {
     private val context = stonePayments.context
     private val tag: String = "STONE_PAYMENTS"
@@ -273,20 +275,12 @@ class PaymentUsecase(
 
     private fun sendAPaymentStatus(status: String) {
         Handler(Looper.getMainLooper()).post {
-            val channel = MethodChannel(
-                StonePaymentsPlugin.flutterBinaryMessenger!!,
-                "stone_payments",
-            )
             channel.invokeMethod("payment-action", status)
         }
     }
 
     private fun sendAQRCode(message: Bitmap) {
         Handler(Looper.getMainLooper()).post {
-            val channel = MethodChannel(
-                StonePaymentsPlugin.flutterBinaryMessenger!!,
-                "stone_payments",
-            )
             channel.invokeMethod("qrcode", bitMapToImagePngBytes(message))
         }
     }
