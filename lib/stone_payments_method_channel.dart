@@ -16,7 +16,7 @@ import 'stone_payments_platform_interface.dart';
 class MethodChannelStonePayments extends StonePaymentsPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('stone_payments');
+  static const methodChannel = MethodChannel('stone_payments');
 
   final _paymentController = BehaviorSubject<ActionTransacitonEnum>();
   final _qrcodeController = BehaviorSubject<Uint8List>();
