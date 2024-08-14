@@ -42,6 +42,5 @@ class StoneException<T> implements PlatformException {
   }
 
   @override
-  // TODO: implement stacktrace
-  String? get stacktrace => throw UnimplementedError();
+  String? get stacktrace => StackTrace.current.toString();
 }
