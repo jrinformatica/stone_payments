@@ -21,7 +21,7 @@ class StoneException<T> implements PlatformException {
       case "PAYMENT_ERROR":
         return StoneException<Transaction>(
           code: platformException.code,
-          message: platformException.message!,
+          message: platformException.message,
           details: Transaction.fromJson(
             Map<String, dynamic>.from(platformException.details),
           ),
@@ -30,7 +30,7 @@ class StoneException<T> implements PlatformException {
       default:
         return StoneException(
           code: platformException.code,
-          message: platformException.message!,
+          message: platformException.message,
           details: platformException.details,
         );
     }
