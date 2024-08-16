@@ -84,7 +84,7 @@ class StonePaymentsPlugin : FlutterPlugin, MethodCallHandler, Activity() {
 
             "cancel-payment" -> {
                 paymentUsecase.cancel(
-                    call.argument("acquirerTransactionKey")!!, call.argument("printReceipt")
+                    call.argument("acquirerTransactionKey")!!
                 )
             }
 

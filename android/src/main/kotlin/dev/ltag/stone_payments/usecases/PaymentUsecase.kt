@@ -204,7 +204,7 @@ class PaymentUsecase(
     }
 
     fun cancel(
-        acquirerTransactionKey: String, print: Boolean?
+        acquirerTransactionKey: String
     ) {
         try {
             val transactionDAO = TransactionDAO(context)
@@ -224,29 +224,27 @@ class PaymentUsecase(
 
                 override fun onSuccess() {
                     try {
-                        if (print == true) {
-                            val posPrintReceiptProvider = PosPrintReceiptProvider(
-                                context, selectedTransaction,
-                                ReceiptType.MERCHANT,
-                            )
+                        val posPrintReceiptProvider = PosPrintReceiptProvider(
+                            context, selectedTransaction,
+                            ReceiptType.MERCHANT,
+                        )
 
-                            posPrintReceiptProvider.connectionCallback =
-                                object : StoneCallbackInterface {
+                        posPrintReceiptProvider.connectionCallback =
+                            object : StoneCallbackInterface {
 
-                                    override fun onSuccess() {
+                                override fun onSuccess() {
 
-                                        Log.d("SUCCESS", selectedTransaction.toString())
+                                    Log.d("SUCCESS", selectedTransaction.toString())
 
-                                    }
-
-                                    override fun onError() {
-                                        Log.d("ERRORPRINT", selectedTransaction.toString())
-
-                                    }
                                 }
 
-                            posPrintReceiptProvider.execute()
-                        }
+                                override fun onError() {
+                                    Log.d("ERRORPRINT", selectedTransaction.toString())
+
+                                }
+                            }
+
+                        posPrintReceiptProvider.execute()
                     } catch (e: Exception) {
                         Log.e("ERROR", e.toString())
                     }
