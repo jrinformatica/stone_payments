@@ -10,22 +10,22 @@ class MyResult(private val result: MethodChannel.Result) : MethodChannel.Result 
     override fun success(value: Any?) {
         Log.d(tag, "success: $value")
         if (alreadyReply) return
-        result.success(value)
         alreadyReply = true
+        result.success(value)
     }
 
     override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
         Log.d(tag, "error: $errorCode, $errorMessage, $errorDetails")
         if (alreadyReply) return
-        result.error(errorCode, errorMessage, errorDetails)
         alreadyReply = true
+        result.error(errorCode, errorMessage, errorDetails)
     }
 
     override fun notImplemented() {
         Log.d(tag, "notImplemented")
         if (alreadyReply) return
-        result.notImplemented()
         alreadyReply = true
+        result.notImplemented()
     }
 
 }
