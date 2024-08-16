@@ -108,17 +108,23 @@ class PaymentUsecase(
                 override fun onSuccess() {
                     if (provider.transactionStatus == TransactionStatusEnum.APPROVED && print == true) {
                         printReceipt(transactionObject)
+                        result.success(transactionObject.toJson())
+                        return
                     }
-                    result.success(transactionObject.toJson())
+                    resultError()
+                }
+
+                fun resultError() {
+                    result.error(
+                        "PAYMENT_ERROR",
+                        provider.messageFromAuthorize ?: provider.getMessageOfErrorInPortuguese(),
+                        transactionObject.toJson()
+                    )
                 }
 
                 override fun onError() {
                     Log.d(tag, "PAYMENT_ERROR")
-                    result.error(
-                        "PAYMENT_ERROR",
-                        provider.getMessageOfErrorInPortuguese(),
-                        transactionObject.toJson()
-                    )
+                    resultError()
                 }
 
                 override fun onStatusChanged(status: Action?) {
