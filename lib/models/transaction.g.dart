@@ -20,7 +20,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       instalmentType: json['instalmentType'] as String? ?? "",
       cardHolderNumber: json['cardHolderNumber'] as String? ?? "",
       cardBrandName: json['cardBrandName'] as String? ?? "",
-      cardBrandId: json['cardBrandId'] as String? ?? "",
+      cardBrandId: (json['cardBrandId'] as num?)?.toInt(),
       cardHolderName: json['cardHolderName'] as String? ?? "",
       cardExpireDate: json['cardExpireDate'] as String? ?? "",
       authorizationCode: json['authorizationCode'] as String? ?? "",

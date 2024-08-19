@@ -15,7 +15,7 @@ class Transaction {
   final String? instalmentType;
   final String? cardHolderNumber;
   final String? cardBrandName;
-  final String? cardBrandId;
+  final int? cardBrandId;
   final String? cardHolderName;
   final String? cardExpireDate;
   final String? authorizationCode;
@@ -42,7 +42,7 @@ class Transaction {
     this.instalmentType = "",
     this.cardHolderNumber = "",
     this.cardBrandName = "",
-    this.cardBrandId = "",
+    this.cardBrandId,
     this.cardHolderName = "",
     this.cardExpireDate = "",
     this.authorizationCode = "",
