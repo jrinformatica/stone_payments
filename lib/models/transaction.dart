@@ -14,7 +14,9 @@ class Transaction {
   final String? instalmentType;
   final String? cardHolderNumber;
   final String? cardBrandName;
+  final String? cardBrandId;
   final String? cardHolderName;
+  final String? cardExpireDate;
   final String? authorizationCode;
   final TransactionStatusEnum transactionStatus;
   final String? date;
@@ -39,7 +41,9 @@ class Transaction {
     this.instalmentType = "",
     this.cardHolderNumber = "",
     this.cardBrandName = "",
+    this.cardBrandId = "",
     this.cardHolderName = "",
+    this.cardExpireDate = "",
     this.authorizationCode = "",
     this.transactionStatus = TransactionStatusEnum.unknown,
     this.date = "",

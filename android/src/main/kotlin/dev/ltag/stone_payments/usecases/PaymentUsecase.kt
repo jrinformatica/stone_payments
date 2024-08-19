@@ -58,7 +58,11 @@ class PaymentUsecase(
             "balance" to balance,
             "isCapture" to isCapture,
             "subMerchantCategoryCode" to subMerchantCategoryCode,
-            "subMerchantAddress" to subMerchantAddress
+            "subMerchantAddress" to subMerchantAddress,
+            "cardExpireDate" to cardExpireDate,
+            "cardBrandId" to cardBrandId,
+
+
         )
     }
 

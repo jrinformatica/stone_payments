@@ -17,7 +17,9 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       instalmentType: json['instalmentType'] as String? ?? "",
       cardHolderNumber: json['cardHolderNumber'] as String? ?? "",
       cardBrandName: json['cardBrandName'] as String? ?? "",
+      cardBrandId: json['cardBrandId'] as String? ?? "",
       cardHolderName: json['cardHolderName'] as String? ?? "",
+      cardExpireDate: json['cardExpireDate'] as String? ?? "",
       authorizationCode: json['authorizationCode'] as String? ?? "",
       transactionStatus: $enumDecodeNullable(
               _$TransactionStatusEnumEnumMap, json['transactionStatus']) ??
@@ -47,7 +49,9 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'instalmentType': instance.instalmentType,
       'cardHolderNumber': instance.cardHolderNumber,
       'cardBrandName': instance.cardBrandName,
+      'cardBrandId': instance.cardBrandId,
       'cardHolderName': instance.cardHolderName,
+      'cardExpireDate': instance.cardExpireDate,
       'authorizationCode': instance.authorizationCode,
       'transactionStatus':
           _$TransactionStatusEnumEnumMap[instance.transactionStatus]!,
