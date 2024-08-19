@@ -13,7 +13,10 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       typeOfTransaction: $enumDecodeNullable(
               _$TypeTransactionEnumEnumMap, json['typeOfTransaction']) ??
           TypeTransactionEnum.credit,
-      instalmentTransaction: json['instalmentTransaction'] as String? ?? "",
+      instalmentTransaction: $enumDecodeNullable(
+              _$InstalmentTransactionEnumEnumMap,
+              json['instalmentTransaction']) ??
+          InstalmentTransactionEnum.oneInstalment,
       instalmentType: json['instalmentType'] as String? ?? "",
       cardHolderNumber: json['cardHolderNumber'] as String? ?? "",
       cardBrandName: json['cardBrandName'] as String? ?? "",
@@ -45,7 +48,8 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'amount': instance.amount,
       'typeOfTransaction':
           _$TypeTransactionEnumEnumMap[instance.typeOfTransaction]!,
-      'instalmentTransaction': instance.instalmentTransaction,
+      'instalmentTransaction':
+          _$InstalmentTransactionEnumEnumMap[instance.instalmentTransaction]!,
       'instalmentType': instance.instalmentType,
       'cardHolderNumber': instance.cardHolderNumber,
       'cardBrandName': instance.cardBrandName,
@@ -75,6 +79,78 @@ const _$TypeTransactionEnumEnumMap = {
   TypeTransactionEnum.voucher: 2,
   TypeTransactionEnum.instantPayment: 3,
   TypeTransactionEnum.pix: 4,
+};
+
+const _$InstalmentTransactionEnumEnumMap = {
+  InstalmentTransactionEnum.oneInstalment: 'ONE_INSTALMENT',
+  InstalmentTransactionEnum.twoInstalmentNoInterest:
+      'TWO_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.threeInstalmentNoInterest:
+      'THREE_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.fourInstalmentNoInterest:
+      'FOUR_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.fiveInstalmentNoInterest:
+      'FIVE_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.sixInstalmentNoInterest:
+      'SIX_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.sevenInstalmentNoInterest:
+      'SEVEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.eightInstalmentNoInterest:
+      'EIGHT_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.nineInstalmentNoInterest:
+      'NINE_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.tenInstalmentNoInterest:
+      'TEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.elevenInstalmentNoInterest:
+      'ELEVEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.twelveInstalmentNoInterest:
+      'TWELVE_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.thirteenInstalmentNoInterest:
+      'THIRTEEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.fourteenInstalmentNoInterest:
+      'FOURTEEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.fifteenInstalmentNoInterest:
+      'FIFTEEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.sixteenInstalmentNoInterest:
+      'SIXTEEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.seventeenInstalmentNoInterest:
+      'SEVENTEEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.eighteenInstalmentNoInterest:
+      'EIGHTEEN_INSTALMENT_NO_INTEREST',
+  InstalmentTransactionEnum.twoInstalmentWithInterest:
+      'TWO_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.threeInstalmentWithInterest:
+      'THREE_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.fourInstalmentWithInterest:
+      'FOUR_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.fiveInstalmentWithInterest:
+      'FIVE_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.sixInstalmentWithInterest:
+      'SIX_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.sevenInstalmentWithInterest:
+      'SEVEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.eightInstalmentWithInterest:
+      'EIGHT_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.nineInstalmentWithInterest:
+      'NINE_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.tenInstalmentWithInterest:
+      'TEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.elevenInstalmentWithInterest:
+      'ELEVEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.twelveInstalmentWithInterest:
+      'TWELVE_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.thirteenInstalmentWithInterest:
+      'THIRTEEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.fourteenInstalmentWithInterest:
+      'FOURTEEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.fifteenInstalmentWithInterest:
+      'FIFTEEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.sixteenInstalmentWithInterest:
+      'SIXTEEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.seventeenInstalmentWithInterest:
+      'SEVENTEEN_INSTALMENT_WITH_INTEREST',
+  InstalmentTransactionEnum.eighteenInstalmentWithInterest:
+      'EIGHTEEN_INSTALMENT_WITH_INTEREST',
 };
 
 const _$TransactionStatusEnumEnumMap = {
