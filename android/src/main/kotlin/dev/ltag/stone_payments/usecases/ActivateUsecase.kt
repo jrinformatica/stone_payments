@@ -3,6 +3,7 @@ package dev.ltag.stone_payments.usecases
 import android.content.Context
 import android.util.Log
 import dev.ltag.stone_payments.model.MyResult
+import dev.ltag.stone_payments.threads.ThreadReversaoPorHora
 import stone.application.StoneStart
 import stone.application.interfaces.StoneCallbackInterface
 import stone.providers.ActiveApplicationProvider
@@ -10,10 +11,32 @@ import stone.user.UserModel
 import stone.utils.Stone
 import stone.utils.keys.StoneKeyType
 
+
 class ActivateUsecase(
     private val context: Context,
     private val result: MyResult,
 ) {
+    companion object {
+        @JvmStatic
+        private var thread: Thread? = null
+    }
+
+    private fun iniciarThreadDeReversao() {
+        thread = thread ?: ThreadReversaoPorHora(context)
+        try {
+            if (!thread!!.isAlive) {
+                thread!!.start()
+            }
+        } catch (e: Exception) {
+            Log.e("Reversal", "Erro ao executar reversal")
+        }
+    }
+
+    fun resultaSucesso() {
+        iniciarThreadDeReversao()
+        result.success(true)
+    }
+
     fun doActivate(
         appName: String,
         stoneCode: String,
@@ -41,8 +64,7 @@ class ActivateUsecase(
 
                 override fun onSuccess() {
                     // SDK ativado com sucesso
-
-                    result.success(true)
+                    resultaSucesso()
                     Log.d("SUCESSO", "SUCESSO")
                 }
 
@@ -55,7 +77,7 @@ class ActivateUsecase(
             }
             activeApplicationProvider.activate(stoneCode)
         } else {
-            result.success(true)
+            resultaSucesso()
         }
     }
 }
