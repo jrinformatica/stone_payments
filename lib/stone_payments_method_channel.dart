@@ -18,7 +18,8 @@ class MethodChannelStonePayments extends StonePaymentsPlatform {
   @visibleForTesting
   static const methodChannel = MethodChannel('stone_payments');
 
-  final _paymentController = BehaviorSubject<ActionTransacitonEnum>();
+  final _paymentController =
+      StreamController<ActionTransacitonEnum>.broadcast();
   final _qrcodeController = BehaviorSubject<Uint8List>();
 
   @override
