@@ -61,8 +61,6 @@ class PaymentUsecase(
             "subMerchantAddress" to subMerchantAddress,
             "cardExpireDate" to cardExpireDate,
             "cardBrandId" to cardBrandId,
-
-
         )
     }
 
@@ -95,8 +93,7 @@ class PaymentUsecase(
 
             transactionObject.instalmentTransaction =
                 InstalmentTransactionEnum.getAt(installment - 1)
-            transactionObject.typeOfTransaction =
-                TypeOfTransactionEnum.values()[type]
+            transactionObject.typeOfTransaction = TypeOfTransactionEnum.values()[type]
             transactionObject.isCapture = false
             val newValue: Int = (value * 100).toInt()
             transactionObject.amount = newValue.toString()
@@ -170,7 +167,9 @@ class PaymentUsecase(
 
     fun abortPayment() {
         try {
-            stonePayments.providerPosTransaction?.abortPayment()
+            Thread {
+                stonePayments.providerPosTransaction?.abortPayment()
+            }.start()
             result.success(true)
         } catch (exception: Exception) {
             Log.d("ERROR", exception.toString())
