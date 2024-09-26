@@ -131,7 +131,6 @@ class _MyAppState extends State<MyApp> {
                   if (listen.isPaused) {
                     listen.resume();
                   }
-                  print(transactionStored);
                   try {
                     await stonePaymentsPlugin.cancel(
                         acquirerTransactionKey: transactionStored);
