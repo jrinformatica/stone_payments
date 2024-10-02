@@ -39,6 +39,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       isCapture: json['isCapture'] as bool? ?? false,
       subMerchantCategoryCode: json['subMerchantCategoryCode'] as String? ?? "",
       subMerchantAddress: json['subMerchantAddress'] as String? ?? "",
+      serialPos: json['serialPos'] as String? ?? "",
     );
 
 Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
@@ -71,6 +72,7 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'isCapture': instance.isCapture,
       'subMerchantCategoryCode': instance.subMerchantCategoryCode,
       'subMerchantAddress': instance.subMerchantAddress,
+      'serialPos': instance.serialPos,
     };
 
 const _$TypeTransactionEnumEnumMap = {

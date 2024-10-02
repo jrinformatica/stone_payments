@@ -32,6 +32,7 @@ class Transaction {
   final bool isCapture;
   final String? subMerchantCategoryCode;
   final String? subMerchantAddress;
+  final String? serialPos;
 
   Transaction({
     this.acquirerTransactionKey = "",
@@ -59,6 +60,7 @@ class Transaction {
     this.isCapture = false,
     this.subMerchantCategoryCode = "",
     this.subMerchantAddress = "",
+    this.serialPos = "",
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>

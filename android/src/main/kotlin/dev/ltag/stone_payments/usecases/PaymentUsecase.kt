@@ -61,6 +61,7 @@ class PaymentUsecase(
             "subMerchantAddress" to subMerchantAddress,
             "cardExpireDate" to cardExpireDate,
             "cardBrandId" to cardBrandId,
+            "serialPos" to Stone.getPosAndroidDevice().getPosAndroidSerialNumber(),
         )
     }
 
