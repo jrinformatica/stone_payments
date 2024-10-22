@@ -224,6 +224,10 @@ class PaymentUsecase(
                 result.error("NOT FOUND", "NOT FOUND", "NOT FOUND")
                 return
             }
+            if (selectedTransaction.transactionStatus == TransactionStatusEnum.CANCELLED) {
+                result.success(true)
+                return
+            }
 
             val provider = CancellationProvider(
                 context,
